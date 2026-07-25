@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK Exercise System - Làm Bài Tập</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .exam-phase {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .exam-phase h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .phase-info {
+            font-size: 0.95em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .timer.listening {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .timer.reading {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container exam-container">
+        <div class="exam-header">
+            <div class="header-left">
+                <h2 id="examTitle">Bài Tập HSK</h2>
+                <p id="examCode" class="exam-code">Đang tải...</p>
+            </div>
+            <div class="timer" id="timerDisplay">
+                <div class="timer-display" id="timer">15:00</div>
+                <p id="timerLabel">Phần Nghe</p>
+            </div>
+        </div>
+
+        <!-- Phase Info -->
+        <div id="phaseInfo" class="exam-phase">
+            <h2 id="phaseName">Phần Nghe - 15 phút</h2>
+            <p class="phase-info" id="phaseDescription">20 câu hỏi | Thời gian: 15 phút</p>
+        </div>
+
+        <div class="exam-content">
+            <div class="sidebar">
+                <div class="question-navigator">
+                    <h3>Danh sách câu</h3>
+                    <div class="question-list" id="questionList"></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div id="examSection"></div>
+            </div>
+        </div>
+
+        <div class="exam-footer">
+            <button class="btn btn-secondary" onclick="goBack()">← Quay lại</button>
+            <div class="progress">
+                <span id="progress">0/40</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+            <button id="submitBtn" class="btn btn-primary" onclick="handlePhaseTransition()">
+                Tiếp tục → Phần Đọc
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="result-header">
+                <h2>📊 Kết quả thi</h2>
+            </div>
+            <div class="result-body">
+                <div class="result-score">
+                    <div class="score-circle">
+                        <span id="totalScore">0</span>
+                        <span class="score-label">/100</span>
+                    </div>
+                </div>
+                <div class="result-details">
+                    <p>Phần Nghe (15 phút): <span id="listeningScore">0</span>/50</p>
+                    <p>Phần Đọc (17 phút): <span id="readingScore">0</span>/50</p>
+                </div>
+                <div class="result-feedback" id="resultFeedback"></div>
+            </div>
+            <div class="result-footer">
+                <button class="btn btn-secondary" onclick="goHome()">Quay lại trang chủ</button>
+                <button class="btn btn-primary" id="submitResultBtn" onclick="submitResultToGoogle()" style="display: none;">
+                    📤 Nộp kết quả
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Info Modal -->
+    <div id="studentInfoModal" class="modal" style="display: flex;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="result-header">
+                <h2>📝 Thông tin học sinh</h2>
+            </div>
+            <div class="result-body">
+                <p style="margin-bottom: 15px; text-align: left;">
+                    Vui lòng điền thông tin của bạn:
+                </p>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Tên:</label>
+                    <input type="text" id="studentName" placeholder="Nhập tên của bạn"
+                           style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 1em;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Lớp:</label>
+                    <input type="text" id="studentClass" placeholder="VD: 10A1, 10A2, ..."
+                           style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 1em;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Email (tùy chọn):</label>
+                    <input type="email" id="studentEmail" placeholder="example@mail.com"
+                           style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 1em;">
+                </div>
+            </div>
+            <div class="result-footer">
+                <button class="btn btn-primary" onclick="startExam()" style="width: 100%;">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/exam-v2.js"></script>
+</body>
+</html>

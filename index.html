@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiếng Trung Thảo Nguyên - HSK 1 Exam System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #d946ef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #7c3aed;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 {
+            color: #333;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* Exam Grid */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .exam-card {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+            border: 2px solid transparent;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .exam-card:active {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .exam-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.3em;
+            color: white;
+        }
+
+        .exam-info {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .btn-start {
+            background: white;
+            color: #7c3aed;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-start:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
+        }
+
+        .btn-start:active {
+            transform: scale(0.98);
+        }
+
+        /* Info Card */
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .info-card ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .info-card strong {
+            color: #7c3aed;
+            font-weight: 600;
+        }
+
+        /* Config Info */
+        .config-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .config-info code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d946ef;
+        }
+
+        /* Loading State */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #7c3aed;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            text-align: center;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c33;
+            grid-column: 1 / -1;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .exam-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://via.placeholder.com/120?text=TTTN" alt="Tiếng Trung Thảo Nguyên" class="logo">
+            </div>
+            <h1>TIẾNG TRUNG THẢO NGUYÊN</h1>
+            <p>🎓 Hệ Thống Thi HSK 1 Trực Tuyến</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Exam Selection -->
+            <div class="card">
+                <h2>📝 Chọn Đề Thi</h2>
+                <p class="subtitle">Chọn một đề thi để bắt đầu làm bài kiểm tra</p>
+
+                <div id="examList" class="exam-grid">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px 0;">
+                        <div class="spinner"></div>
+                        <p class="loading-text">⏳ Đang tải danh sách đề thi...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card info-card">
+                <h2>📋 Thông Tin Bài Thi</h2>
+                <ul>
+                    <li>
+                        <strong>Phần Nghe (Listening):</strong><br>
+                        20 câu, 50 điểm, 15 phút
+                    </li>
+                    <li>
+                        <strong>Phần Đọc (Reading):</strong><br>
+                        20 câu, 50 điểm, 17 phút
+                    </li>
+                    <li>
+                        <strong>Tổng Cộng:</strong><br>
+                        40 câu, 100 điểm
+                    </li>
+                    <li>
+                        <strong>Thời Gian:</strong><br>
+                        32 phút (15 phút Nghe + 17 phút Đọc)
+                    </li>
+                    <li>
+                        <strong>Cách Chấm:</strong><br>
+                        Mỗi câu đúng = 2.5 điểm
+                    </li>
+                </ul>
+                <div class="config-info" id="configInfo" style="display: none;">
+                    <strong>⚙️ Cấu Hình:</strong><br>
+                    <code id="deploymentUrl"></code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 Tiếng Trung Thảo Nguyên | HSK 1 Exam System</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            SCRIPT_URL_KEY: 'googleScriptUrl',
+            SELECTED_EXAM_KEY: 'selectedExam'
+        };
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeSystem();
+        });
+
+        // Initialize system
+        function initializeSystem() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const googleScriptUrl = urlParams.get('scriptUrl') || localStorage.getItem(CONFIG.SCRIPT_URL_KEY);
+
+            if (googleScriptUrl) {
+                localStorage.setItem(CONFIG.SCRIPT_URL_KEY, googleScriptUrl);
+                showDeploymentUrl(googleScriptUrl);
+                loadExamsList(googleScriptUrl);
+            } else {
+                showNoScriptUrlWarning();
+            }
+        }
+
+        // Load exams list
+        function loadExamsList(googleScriptUrl) {
+            const url = googleScriptUrl + '?action=getExamsList';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.length > 0) {
+                        displayExams(data.data);
+                    } else {
+                        showError('Không thể tải danh sách đề thi từ Google Sheet');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('❌ Lỗi kết nối: Không thể tải danh sách đề.<br>Vui lòng kiểm tra URL Google Apps Script.');
+                });
+        }
+
+        // Display exams
+        function displayExams(exams) {
+            const examList = document.getElementById('examList');
+            examList.innerHTML = '';
+
+            exams.forEach(exam => {
+                const card = document.createElement('div');
+                card.className = 'exam-card';
+                card.innerHTML = `
+                    <h3>Đề ${exam.examCode}</h3>
+                    <p class="exam-info">40 câu | 32 phút</p>
+                    <button class="btn-start" onclick="startExam('${exam.examCode}')">
+                        Bắt Đầu
+                    </button>
+                `;
+                examList.appendChild(card);
+            });
+        }
+
+        // Start exam
+        function startExam(examCode) {
+            localStorage.setItem(CONFIG.SELECTED_EXAM_KEY, examCode);
+            window.location.href = 'exam-v2.html';
+        }
+
+        // Show no script URL warning
+        function showNoScriptUrlWarning() {
+            const examList = document.getElementById('examList');
+            examList.innerHTML = `
+                <div class="error-message" style="grid-column: 1 / -1;">
+                    <strong>❌ Lỗi: Chưa cấu hình URL Google Apps Script</strong><br>
+                    <p style="margin: 10px 0 0 0;">Vui lòng thêm tham số vào URL:</p>
+                    <code style="background: white; padding: 5px 10px; border-radius: 4px; display: block; margin-top: 10px;">
+                        ?scriptUrl=YOUR_DEPLOYMENT_URL
+                    </code>
+                </div>
+            `;
+        }
+
+        // Show error
+        function showError(message) {
+            const examList = document.getElementById('examList');
+            examList.innerHTML = `
+                <div class="error-message" style="grid-column: 1 / -1;">
+                    <strong>${message}</strong>
+                </div>
+            `;
+        }
+
+        // Show deployment URL
+        function showDeploymentUrl(url) {
+            const configInfo = document.getElementById('configInfo');
+            const deploymentUrl = document.getElementById('deploymentUrl');
+            deploymentUrl.textContent = url;
+            configInfo.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
