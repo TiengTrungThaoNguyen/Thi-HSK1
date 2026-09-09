@@ -195,7 +195,7 @@
 /* ================= STATE ================= */
 // Link Web App (Apps Script) đã Deploy cho hệ thống HSK1 — sửa lại đúng link
 // của bạn sau khi Deploy Code_HSK1.gs.
-const API_URL = 'https://script.google.com/macros/s/AKfycbzNIxKQRSnigSDeOqOn9D5FGZIg3NL09l8Crkq7O11arcRHW8WkJNee-0RrWTp7coiU/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwyibkDZhfBREFEvikaPHH4yspBK72qZ4kwbYqNGba81LjkRBwptkOxKnMj3zzgVg7h/exec';
 let DATA = null;
 let currentLesson = '';
 let hoTen = '';
@@ -323,13 +323,14 @@ function starBreak(s){
   return String(s||'').split('★').join('<br>★ ').replace(/^<br>/, '');
 }
 
-/* ---- Nghe P1 (câu 1-3): mỗi câu 3 ảnh riêng (không pool) — dùng chung 1 băng nghe cho cả phần Nghe ---- */
+/* ---- Nghe P1 (câu 1-3): pool ẢNH dùng chung 3 ảnh (A-C) lấy từ chính 3 dòng của bài — dùng chung 1 băng nghe cho cả phần Nghe ---- */
 function renderNgheP1(part){
   const items = part.items;
   const h1 = heading('nghe_p1', items);
-  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
+  const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${imgBubbleRow(it.id, it.images)}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}</div>`;
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
