@@ -1,484 +1,620 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiếng Trung Thảo Nguyên - HSK 1 Exam System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#F3F7EA; --surface:#FFFFFF; --surface-2:#E9F5D4;
+    --ink:#16220A; --ink-muted:#55684A;
+    --brand:#4C8C00; --brand-dark:#2B5200; --brand-tint:#E3F4B4;
+    --brand-bright:#C3E600;
+    --border:#D6E6C0; --danger:#B23A2E; --danger-tint:#F6E1DD;
+    --warning:#8A6D00; --warning-tint:#F1ECC0;
+    --nghe-accent:#2F5D00; --doc-accent:#4C8C00;
+    --topbar-gradient: linear-gradient(rgba(6,16,0,.22),rgba(6,16,0,.22)),
+      linear-gradient(100deg,#173300 0%,#3C7A00 20%,#8FCF00 42%,#E9FF6B 55%,#8FCF00 68%,#3C7A00 85%,#173300 100%);
+    --shadow:0 1px 2px rgba(20,32,10,.08), 0 4px 16px rgba(20,32,10,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1206; --surface:#121D0B; --surface-2:#182610;
+      --ink:#E9F2DD; --ink-muted:#9DB48B;
+      --brand:#7CC400; --brand-dark:#5C9600; --brand-tint:#22350D;
+      --brand-bright:#D6FF4D;
+      --border:#28401A; --danger:#E4695A; --danger-tint:#3B211D;
+      --warning:#D9C441; --warning-tint:#332C0F;
+      --nghe-accent:#7CC400; --doc-accent:#5C9600;
+      --topbar-gradient: linear-gradient(rgba(2,6,0,.3),rgba(2,6,0,.3)),
+        linear-gradient(100deg,#112000 0%,#2C4D0A 20%,#5C9600 42%,#A8D400 55%,#5C9600 68%,#2C4D0A 85%,#112000 100%);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 20px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1206; --surface:#121D0B; --surface-2:#182610;
+    --ink:#E9F2DD; --ink-muted:#9DB48B;
+    --brand:#7CC400; --brand-dark:#5C9600; --brand-tint:#22350D;
+    --brand-bright:#D6FF4D;
+    --border:#28401A; --danger:#E4695A; --danger-tint:#3B211D;
+    --warning:#D9C441; --warning-tint:#332C0F;
+    --nghe-accent:#7CC400; --doc-accent:#5C9600;
+    --topbar-gradient: linear-gradient(rgba(2,6,0,.3),rgba(2,6,0,.3)),
+      linear-gradient(100deg,#112000 0%,#2C4D0A 20%,#5C9600 42%,#A8D400 55%,#5C9600 68%,#2C4D0A 85%,#112000 100%);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 20px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Noto Serif","Noto Serif SC",serif; line-height:1.6; }
+  .ui{ font-family:"Be Vietnam Pro","Noto Sans SC",sans-serif; }
+  .examWrap{ max-width:820px; margin:0 auto; padding:0 16px 120px; }
+  .topbar{ position:sticky; top:0; z-index:30; background-image:var(--topbar-gradient); background-repeat:no-repeat; background-size:100% 100%; color:#fff; padding:14px 16px; margin:0 -16px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; box-shadow:var(--shadow); flex-wrap:wrap; }
+  .topbar .title{ font-family:"Be Vietnam Pro",sans-serif; font-weight:700; font-size:1.1rem; letter-spacing:.02em; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+  .topbar .title small{ display:block; font-weight:500; font-size:.75rem; opacity:.85; }
+  .progressPill{ font-family:"Be Vietnam Pro",sans-serif; font-size:.8rem; font-weight:600; background:rgba(255,255,255,.16); border-radius:999px; padding:6px 12px; font-variant-numeric:tabular-nums; }
 
-        body {
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #d946ef 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
+  .setupCard{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-top:20px; box-shadow:var(--shadow); font-family:"Be Vietnam Pro",sans-serif; }
+  .setupCard h1{ font-family:"Noto Serif SC",serif; font-size:1.3rem; margin:0 0 4px; }
+  .setupCard p.sub{ color:var(--ink-muted); margin:0 0 18px; font-size:.9rem; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:.82rem; font-weight:600; margin-bottom:6px; }
+  .field select, .field input[type=text]{
+    width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px;
+    font-family:inherit; font-size:.95rem; background:var(--surface); color:var(--ink);
+  }
+  .field select:focus, .field input:focus{ outline:none; border-color:var(--brand); }
 
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-            padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: slideDown 0.8s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-container {
-            margin-bottom: 20px;
-        }
-
-        .logo {
-            max-width: 120px;
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-        }
-
-        .header h1 {
-            font-size: 2.8em;
-            color: #fff;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            font-size: 1.2em;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Main Content */
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-            animation: fadeIn 0.8s ease 0.2s both;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
-        }
-
-        .card h2 {
-            color: #7c3aed;
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card h3 {
-            color: #333;
-            font-size: 1.3em;
-            margin-bottom: 20px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 0.95em;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        /* Exam Grid */
-        .exam-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .exam-card {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
-            border: 2px solid transparent;
-        }
-
-        .exam-card:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .exam-card:active {
-            transform: translateY(-4px) scale(1.02);
-        }
-
-        .exam-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.3em;
-            color: white;
-        }
-
-        .exam-info {
-            font-size: 0.85em;
-            opacity: 0.9;
-            margin-bottom: 12px;
-        }
-
-        .btn-start {
-            background: white;
-            color: #7c3aed;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        .btn-start:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.05);
-        }
-
-        .btn-start:active {
-            transform: scale(0.98);
-        }
-
-        /* Info Card */
-        .info-card {
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .info-card ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .info-card li {
-            padding: 15px 0;
-            border-bottom: 1px solid #e0e0e0;
-            color: #555;
-            font-size: 1em;
-            line-height: 1.6;
-        }
-
-        .info-card li:last-child {
-            border-bottom: none;
-        }
-
-        .info-card strong {
-            color: #7c3aed;
-            font-weight: 600;
-        }
-
-        /* Config Info */
-        .config-info {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid #ffc107;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .config-info code {
-            background: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            color: #d946ef;
-        }
-
-        /* Loading State */
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #7c3aed;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            text-align: center;
-            color: white;
-            font-size: 1.1em;
-        }
-
-        /* Error Message */
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #c33;
-            grid-column: 1 / -1;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            font-size: 0.95em;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .card {
-                padding: 25px;
-            }
-
-            .exam-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-        }
-
-        .empty-state-icon {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-    </style>
+  h2.skillHeading{ font-family:"Noto Serif SC","Noto Serif",serif; font-weight:700; font-size:1.3rem; text-align:center; margin:36px 0 16px; text-wrap:balance; }
+  h2.skillHeading .vi{ display:block; font-family:"Be Vietnam Pro",sans-serif; font-weight:600; font-size:.85rem; color:var(--ink-muted); margin-top:2px; }
+  .audioBar{ position:sticky; top:64px; z-index:20; background:var(--surface); border:1px solid var(--border); border-left:5px solid var(--nghe-accent); border-radius:10px; padding:14px 16px; margin-bottom:18px; box-shadow:var(--shadow); font-family:"Be Vietnam Pro",sans-serif; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .audioBar .label{ font-weight:700; font-size:.92rem; }
+  .audioBar .sub{ font-size:.78rem; color:var(--ink-muted); }
+  .audioTrack{ flex:1 1 160px; min-width:120px; height:8px; border-radius:99px; background:var(--surface-2); overflow:hidden; }
+  .audioTrack .fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--brand-dark),var(--brand-bright)); transition:width .2s linear; }
+  .btn{ font-family:"Be Vietnam Pro",sans-serif; font-weight:600; font-size:.85rem; border:none; border-radius:8px; padding:9px 16px; cursor:pointer; background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 60%,var(--brand-bright) 130%); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+  .btn:hover{ background:var(--brand-dark); }
+  .btn:disabled{ background:var(--surface-2); color:var(--ink-muted); cursor:not-allowed; }
+  .btn.warn{ background:var(--warning); }
+  .partCard{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 20px 22px; margin-bottom:18px; box-shadow:var(--shadow); }
+  .partCard.nghe{ border-top:4px solid var(--nghe-accent); }
+  .partCard.doc{ border-top:4px solid var(--doc-accent); }
+  .partHead{ margin-bottom:14px; }
+  .partHead .zh{ font-weight:700; font-size:1.05rem; }
+  .partHead .vi{ font-family:"Be Vietnam Pro",sans-serif; font-size:.85rem; color:var(--ink-muted); margin-top:2px; }
+  .qRow{ padding:14px 0; border-top:1px dashed var(--border); }
+  .qRow:first-of-type{ border-top:none; }
+  .qNum{ font-weight:700; color:var(--ink-muted); margin-right:6px; font-family:"Be Vietnam Pro",sans-serif; }
+  .qText{ margin:4px 0 10px; }
+  .qPassage{ background:var(--surface-2); border-radius:8px; padding:10px 14px; margin-bottom:8px; white-space:pre-line; }
+  .qPinyin{ font-family:"Be Vietnam Pro",sans-serif; font-size:.8rem; color:var(--ink-muted); margin:2px 0 8px; }
+  .bubbleRow{ display:flex; flex-wrap:wrap; gap:8px; }
+  .bubble{ font-family:"Be Vietnam Pro","Noto Sans SC",sans-serif; font-size:.88rem; font-weight:600; border:1.5px solid var(--border); background:var(--surface); color:var(--ink); border-radius:999px; padding:7px 14px; cursor:pointer; text-align:left; }
+  .bubble .py{ display:block; font-size:.72rem; font-weight:500; color:var(--ink-muted); }
+  .bubble:hover{ border-color:var(--brand); }
+  .bubble.selected{ background:var(--brand-tint); border-color:var(--brand); color:var(--brand-dark); }
+  .bubble.letter{ min-width:38px; text-align:center; padding:7px 0; }
+  .bubble:disabled{ cursor:default; opacity:.75; }
+  .bubble.correct{ background:var(--brand-tint); border-color:var(--brand); color:var(--brand-dark); }
+  .bubble.correct::after{ content:" ✓"; }
+  .bubble.wrong{ background:var(--danger-tint); border-color:var(--danger); color:var(--danger); }
+  .bubble.wrong::after{ content:" ✕"; }
+  .pool{ background:var(--surface-2); border-radius:8px; padding:12px 14px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px; }
+  .pool .item{ display:flex; gap:8px; align-items:baseline; }
+  .pool .letter{ font-weight:700; color:var(--doc-accent); min-width:1.2em; }
+  .pool .py{ font-family:"Be Vietnam Pro",sans-serif; font-size:.78rem; color:var(--ink-muted); }
+  .wordbank{ display:flex; flex-wrap:wrap; gap:8px 16px; background:var(--surface-2); border-radius:8px; padding:12px 14px; margin-bottom:16px; justify-content:center; font-family:"Be Vietnam Pro",sans-serif;}
+  .wordbank .letter{ color:var(--doc-accent); margin-right:4px; font-weight:700; }
+  .wordbank .py{ font-size:.78rem; color:var(--ink-muted); margin-left:4px; }
+  .imgBubbleRow{ display:flex; gap:10px; flex-wrap:wrap; }
+  .imgBubble{ font-family:"Be Vietnam Pro",sans-serif; border:1.5px solid var(--border); border-radius:10px; padding:6px; background:var(--surface); cursor:pointer; text-align:center; }
+  .imgBubble img{ display:block; width:112px; height:112px; object-fit:cover; border-radius:6px; }
+  .imgBubble .letter{ display:block; margin-top:4px; font-weight:700; }
+  .imgBubble:hover{ border-color:var(--brand); }
+  .imgBubble.selected{ border-color:var(--brand); background:var(--brand-tint); }
+  .imgBubble:disabled{ cursor:default; opacity:.8; }
+  .imgBubble.correct{ border-color:var(--brand); }
+  .imgBubble.correct .letter::after{ content:" ✓"; }
+  .imgBubble.wrong{ border-color:var(--danger); }
+  .imgBubble.wrong .letter::after{ content:" ✕"; }
+  .imgPool{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; background:var(--surface-2); border-radius:8px; padding:14px; margin-bottom:16px; }
+  .imgPoolItem{ text-align:center; font-family:"Be Vietnam Pro",sans-serif; }
+  .imgPoolItem img{ width:130px; height:130px; object-fit:cover; border-radius:8px; display:block; }
+  .imgPoolItem .letter{ display:block; margin-top:4px; font-weight:700; color:var(--doc-accent); }
+  .tbdNote{ font-family:"Be Vietnam Pro",sans-serif; font-size:.78rem; color:var(--warning); background:var(--warning-tint); border-radius:6px; padding:6px 10px; margin-top:8px; display:inline-block; }
+  .submitBar{ position:fixed; left:0; right:0; bottom:0; z-index:40; background:var(--surface); border-top:1px solid var(--border); box-shadow:0 -4px 16px rgba(0,0,0,.08); padding:12px 16px; display:flex; align-items:center; justify-content:center; gap:16px; font-family:"Be Vietnam Pro",sans-serif; }
+  .submitBar .count{ font-size:.85rem; color:var(--ink-muted); font-variant-numeric:tabular-nums; }
+  .submitBar .btn{ padding:11px 28px; font-size:.95rem; }
+  .resultOverlay{ position:fixed; inset:0; background:rgba(16,22,15,.55); z-index:50; display:flex; align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto; }
+  .resultOverlay.hidden{ display:none; }
+  .resultCard{ background:var(--surface); border-radius:14px; max-width:420px; width:100%; padding:28px 26px; text-align:center; font-family:"Be Vietnam Pro",sans-serif; box-shadow:var(--shadow); }
+  .resultCard .score{ font-size:2.6rem; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums; margin:8px 0 4px;}
+  .resultCard .sub{ color:var(--ink-muted); font-size:.88rem; margin-bottom:14px; }
+  .resultCard .row{ display:flex; justify-content:space-between; font-size:.9rem; padding:6px 0; border-top:1px dashed var(--border); }
+  .resultCard .row.penalty{ color:var(--danger); font-size:.8rem; border-top:none; padding-top:0; }
+  .resultCard .btn{ margin-top:16px; }
+  .hskBadge{ display:inline-block; font-weight:700; font-size:.82rem; border-radius:999px; padding:6px 14px; margin:6px 0 12px; }
+  .hskBadge.pass{ background:var(--brand-tint); color:var(--brand-dark); }
+  .hskBadge.fail{ background:var(--danger-tint); color:var(--danger); }
+  .hskBadge.neutral{ background:var(--surface-2); color:var(--ink-muted); }
+  .hidden{ display:none !important; }
+  .loading{ text-align:center; padding:40px 0; color:var(--ink-muted); font-family:"Be Vietnam Pro",sans-serif; }
+  .brandWatermark{ position:fixed; left:10px; bottom:8px; z-index:45; font-family:"Be Vietnam Pro",sans-serif; font-size:.62rem; color:var(--ink-muted); background:var(--surface); border:1px solid var(--border); padding:3px 10px; border-radius:999px; opacity:.85; box-shadow:var(--shadow); }
+  .brandBlock{ font-family:"Be Vietnam Pro",sans-serif; text-align:center; margin-top:14px; }
+  .brandBlock .brandName{ font-weight:700; font-size:1rem; color:var(--brand-dark); letter-spacing:.02em; }
+  .brandBlock .brandSub{ font-size:.78rem; color:var(--ink-muted); margin-top:2px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-container">
-                <img src="https://via.placeholder.com/120?text=TTTN" alt="Tiếng Trung Thảo Nguyên" class="logo">
-            </div>
-            <h1>TIẾNG TRUNG THẢO NGUYÊN</h1>
-            <p>🎓 Hệ Thống Thi HSK 1 Trực Tuyến</p>
-        </div>
 
-        <!-- Main Content -->
-        <div class="content">
-            <!-- Exam Selection -->
-            <div class="card">
-                <h2>📝 Chọn Đề Thi</h2>
-                <p class="subtitle">Chọn một đề thi để bắt đầu làm bài kiểm tra</p>
+<div class="examWrap">
+  <div class="topbar">
+    <div class="title">TIẾNG TRUNG THẢO NGUYÊN<small id="lessonLabel">Luyện thi HSK1 · Phòng Thi HSK1</small></div>
+    <div class="progressPill ui hidden" id="progressPill">0 / 0 đã làm</div>
+  </div>
 
-                <div id="examList" class="exam-grid">
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px 0;">
-                        <div class="spinner"></div>
-                        <p class="loading-text">⏳ Đang tải danh sách đề thi...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Info Card -->
-            <div class="card info-card">
-                <h2>📋 Thông Tin Bài Thi</h2>
-                <ul>
-                    <li>
-                        <strong>Phần Nghe (Listening):</strong><br>
-                        20 câu, 50 điểm, 15 phút
-                    </li>
-                    <li>
-                        <strong>Phần Đọc (Reading):</strong><br>
-                        20 câu, 50 điểm, 17 phút
-                    </li>
-                    <li>
-                        <strong>Tổng Cộng:</strong><br>
-                        40 câu, 100 điểm
-                    </li>
-                    <li>
-                        <strong>Thời Gian:</strong><br>
-                        32 phút (15 phút Nghe + 17 phút Đọc)
-                    </li>
-                    <li>
-                        <strong>Cách Chấm:</strong><br>
-                        Mỗi câu đúng = 2.5 điểm
-                    </li>
-                </ul>
-                <div class="config-info" id="configInfo" style="display: none;">
-                    <strong>⚙️ Cấu Hình:</strong><br>
-                    <code id="deploymentUrl"></code>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>© 2024 Tiếng Trung Thảo Nguyên | HSK 1 Exam System</p>
-        </div>
+  <div class="setupCard" id="setupCard">
+    <h1>Bắt đầu làm bài</h1>
+    <p class="sub ui">Chọn bài và nhập tên trước khi vào phòng thi.</p>
+    <div class="field">
+      <label class="ui">Họ tên học sinh</label>
+      <input type="text" id="hoTenInput" placeholder="Nhập tên của bạn">
     </div>
+    <div class="field">
+      <label class="ui">Chọn bài</label>
+      <select id="lessonSelect"><option value="">Đang tải danh sách bài...</option></select>
+    </div>
+    <button class="btn ui" id="startBtn" disabled>Bắt đầu làm bài</button>
+    <div class="brandBlock"><div class="brandName">TIẾNG TRUNG THẢO NGUYÊN</div><div class="brandSub">Luyện thi HSK1</div><div class="brandSub">SĐT: 0911.715.999</div></div>
+  </div>
 
-    <script>
-        // Configuration
-        const CONFIG = {
-            SCRIPT_URL_KEY: 'googleScriptUrl',
-            SELECTED_EXAM_KEY: 'selectedExam'
-        };
+  <main id="app"></main>
+</div>
+<div class="brandWatermark ui">Tiếng Trung Thảo Nguyên · 0911.715.999</div>
 
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            initializeSystem();
-        });
+<div class="submitBar hidden" id="submitBar">
+  <div class="count ui" id="submitCount">Bạn đã làm 0/0 câu</div>
+  <button class="btn ui" id="submitBtn">Nộp bài</button>
+</div>
 
-        // Initialize system
-        function initializeSystem() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const googleScriptUrl = urlParams.get('scriptUrl') || localStorage.getItem(CONFIG.SCRIPT_URL_KEY);
+<div class="resultOverlay hidden" id="resultOverlay">
+  <div class="resultCard">
+    <div class="sub">KẾT QUẢ BÀI LÀM · thang điểm chuẩn HSK1 (2×100)</div>
+    <div class="score" id="scoreBig">0</div>
+    <div class="sub" id="scoreSub">/ 200 điểm</div>
+    <div class="hskBadge ui" id="hskBadge"></div>
+    <div class="row"><span>听力 Nghe</span><span id="rowNghe">–</span></div>
+    <div class="row penalty hidden" id="rowPenalty"><span>　(đã trừ 10đ vì bấm nghe lại)</span><span></span></div>
+    <div class="row"><span>阅读 Đọc</span><span id="rowDoc">–</span></div>
+    <button class="btn ui" id="reviewBtn">Xem lại bài làm &amp; đáp án</button>
+    <div class="brandBlock"><div class="brandName">TIẾNG TRUNG THẢO NGUYÊN</div><div class="brandSub">Luyện thi HSK1</div><div class="brandSub">SĐT: 0911.715.999</div></div>
+  </div>
+</div>
 
-            if (googleScriptUrl) {
-                localStorage.setItem(CONFIG.SCRIPT_URL_KEY, googleScriptUrl);
-                showDeploymentUrl(googleScriptUrl);
-                loadExamsList(googleScriptUrl);
-            } else {
-                showNoScriptUrlWarning();
-            }
-        }
+<audio id="ngheAudio" preload="auto"></audio>
 
-        // Load exams list
-        function loadExamsList(googleScriptUrl) {
-            const url = googleScriptUrl + '?action=getExamsList';
+<script>
+/* ================= STATE ================= */
+// Link Web App (Apps Script) đã Deploy cho hệ thống HSK1 — sửa lại đúng link
+// của bạn sau khi Deploy Code_HSK1.gs.
+const API_URL = 'https://script.google.com/macros/s/AKfycbzNIxKQRSnigSDeOqOn9D5FGZIg3NL09l8Crkq7O11arcRHW8WkJNee-0RrWTp7coiU/exec';
+let DATA = null;
+let currentLesson = '';
+let hoTen = '';
+let answers = {};
+let submitted = false;
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.data && data.data.length > 0) {
-                        displayExams(data.data);
-                    } else {
-                        showError('Không thể tải danh sách đề thi từ Google Sheet');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showError('❌ Lỗi kết nối: Không thể tải danh sách đề.<br>Vui lòng kiểm tra URL Google Apps Script.');
-                });
-        }
+/* ================= LABELS ================= */
+const PART_LABELS = {
+  nghe_p1:{suffix:'题：听短语，选择正确图片', vi:'Nghe cụm từ và chọn bức tranh phù hợp.'},
+  nghe_p2:{suffix:'题：听问题，选择正确答案', vi:'Nghe câu hỏi và chọn câu trả lời đúng.'},
+  nghe_p3:{suffix:'题：听对话，选择最匹配的图片', vi:'Nghe đoạn hội thoại và chọn bức tranh phù hợp nhất.'},
+  nghe_p4:{suffix:'题：听句子和问题，选择正确答案', vi:'Nghe câu và câu hỏi, chọn câu trả lời đúng.'},
+  doc_p1:{suffix:'题：选择与句子最匹配的图片', vi:'Đọc câu và chọn bức tranh phù hợp nhất.'},
+  doc_p2:{suffix:'题：匹配句子', vi:'Ghép câu hỏi với câu trả lời phù hợp.'},
+  doc_p3:{suffix:'题：选词填空', vi:'Chọn từ thích hợp điền vào chỗ trống.'},
+  doc_p4:{suffix:'题：选择正确答案', vi:'Đọc đoạn văn/câu và trả lời câu hỏi.'}
+};
+function flattenItems(part){
+  if(!part) return [];
+  return part.items || [];
+}
+function heading(key, items){
+  if(!items.length) return {zh:'', vi:PART_LABELS[key].vi};
+  const first = items[0].id, last = items[items.length-1].id;
+  const range = first===last ? String(first) : (first+'–'+last);
+  return { zh:'第'+range+PART_LABELS[key].suffix, vi:PART_LABELS[key].vi };
+}
 
-        // Display exams
-        function displayExams(exams) {
-            const examList = document.getElementById('examList');
-            examList.innerHTML = '';
+/* ================= SETUP: load lesson list ================= */
+fetch(API_URL + '?action=lessons')
+  .then(r=>r.json())
+  .then(res=>{
+    if(!res.ok) throw new Error(res.error || 'Không tải được danh sách bài');
+    const list = res.data;
+    const sel = document.getElementById('lessonSelect');
+    sel.innerHTML = '';
+    if(!list || !list.length){
+      sel.innerHTML = '<option value="">Chưa có dữ liệu bài nào trong Sheet</option>';
+      return;
+    }
+    list.forEach(l=>{
+      const opt = document.createElement('option');
+      opt.value = l; opt.textContent = 'Bài ' + l;
+      sel.appendChild(opt);
+    });
+    document.getElementById('startBtn').disabled = false;
+  })
+  .catch(err=>{
+    document.getElementById('lessonSelect').innerHTML = '<option>Lỗi tải danh sách: '+err.message+'</option>';
+  });
 
-            exams.forEach(exam => {
-                const card = document.createElement('div');
-                card.className = 'exam-card';
-                card.innerHTML = `
-                    <h3>Đề ${exam.examCode}</h3>
-                    <p class="exam-info">40 câu | 32 phút</p>
-                    <button class="btn-start" onclick="startExam('${exam.examCode}')">
-                        Bắt Đầu
-                    </button>
-                `;
-                examList.appendChild(card);
-            });
-        }
+document.getElementById('hoTenInput').addEventListener('input', e=>{ hoTen = e.target.value; });
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  currentLesson = document.getElementById('lessonSelect').value;
+  if(!currentLesson) return;
+  const startBtn = document.getElementById('startBtn');
+  startBtn.disabled = true;
+  startBtn.textContent = 'Đang tải đề...';
+  fetch(API_URL + '?action=exam&bai=' + encodeURIComponent(currentLesson))
+    .then(r=>r.json())
+    .then(res=>{
+      if(!res.ok) throw new Error(res.error || 'Không tải được đề bài');
+      onDataLoaded(res.data);
+    })
+    .catch(err=>{
+      alert('Lỗi tải đề: '+err.message);
+      startBtn.disabled = false;
+      startBtn.textContent = 'Bắt đầu làm bài';
+    });
+});
 
-        // Start exam
-        function startExam(examCode) {
-            localStorage.setItem(CONFIG.SELECTED_EXAM_KEY, examCode);
-            window.location.href = 'exam-v2.html';
-        }
+function onDataLoaded(data){
+  DATA = data;
+  document.getElementById('setupCard').classList.add('hidden');
+  document.getElementById('lessonLabel').textContent = 'Bài '+currentLesson+(hoTen?(' · '+hoTen):'')+' · Luyện thi HSK1';
+  document.getElementById('progressPill').classList.remove('hidden');
+  document.getElementById('submitBar').classList.remove('hidden');
+  renderApp();
+}
 
-        // Show no script URL warning
-        function showNoScriptUrlWarning() {
-            const examList = document.getElementById('examList');
-            examList.innerHTML = `
-                <div class="error-message" style="grid-column: 1 / -1;">
-                    <strong>❌ Lỗi: Chưa cấu hình URL Google Apps Script</strong><br>
-                    <p style="margin: 10px 0 0 0;">Vui lòng thêm tham số vào URL:</p>
-                    <code style="background: white; padding: 5px 10px; border-radius: 4px; display: block; margin-top: 10px;">
-                        ?scriptUrl=YOUR_DEPLOYMENT_URL
-                    </code>
-                </div>
-            `;
-        }
+/* ================= RENDER HELPERS ================= */
+function bubbleRow(qid, options, kind){
+  let html = '<div class="bubbleRow">';
+  if(kind==='letter'){
+    options.forEach(letter=>{
+      const sel = answers[qid]===letter ? ' selected':'';
+      html += `<button type="button" class="bubble letter${sel}" data-qid="${qid}" data-val="${letter}">${letter}</button>`;
+    });
+  } else if(kind==='text'){
+    Object.keys(options).forEach(letter=>{
+      const opt = options[letter];
+      const text = (opt && typeof opt === 'object') ? opt.text : opt;
+      const pinyin = (opt && typeof opt === 'object') ? opt.pinyin : '';
+      if(!text) return;
+      const sel = answers[qid]===letter ? ' selected':'';
+      html += `<button type="button" class="bubble${sel}" data-qid="${qid}" data-val="${letter}">${letter}. ${text}${pinyin?`<span class="py">${pinyin}</span>`:''}</button>`;
+    });
+  }
+  html += '</div>';
+  return html;
+}
+// Mỗi câu Nghe-1 có 3 ảnh RIÊNG (không dùng pool) — bấm thẳng vào ảnh để chọn.
+function imgBubbleRow(qid, images){
+  let html = '<div class="imgBubbleRow">';
+  ['A','B','C'].forEach(L=>{
+    if(!images[L]) return;
+    const sel = answers[qid]===L ? ' selected':'';
+    html += `<button type="button" class="imgBubble${sel}" data-qid="${qid}" data-val="${L}"><img src="${images[L]}" alt="Lựa chọn ${L}"><span class="letter">${L}</span></button>`;
+  });
+  html += '</div>';
+  return html;
+}
+// Pool ảnh dùng chung (Nghe-3, Đọc-1) — hiện 1 lần cho cả khối câu, học sinh
+// chọn đáp án bằng bong bóng chữ cái (không bấm thẳng vào ảnh).
+function poolImageBlock(pool){
+  let html = '<div class="imgPool">';
+  Object.keys(pool).forEach(l=>{
+    if(!pool[l]) return;
+    html += `<div class="imgPoolItem"><img src="${pool[l]}" alt="Ảnh ${l}"><span class="letter">${l}</span></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+function starBreak(s){
+  return String(s||'').split('★').join('<br>★ ').replace(/^<br>/, '');
+}
 
-        // Show error
-        function showError(message) {
-            const examList = document.getElementById('examList');
-            examList.innerHTML = `
-                <div class="error-message" style="grid-column: 1 / -1;">
-                    <strong>${message}</strong>
-                </div>
-            `;
-        }
+/* ---- Nghe P1 (câu 1-3): mỗi câu 3 ảnh riêng (không pool) — dùng chung 1 băng nghe cho cả phần Nghe ---- */
+function renderNgheP1(part){
+  const items = part.items;
+  const h1 = heading('nghe_p1', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${imgBubbleRow(it.id, it.images)}</div>`;
+  });
+  if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
+  return h;
+}
+/* ---- Nghe P2 (câu 4-5): 3 đáp án chữ kèm pinyin ---- */
+function renderNgheP2(part){
+  const items = part.items;
+  const h1 = heading('nghe_p2', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}</div>`;
+  });
+  if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
+  return h;
+}
+/* ---- Nghe P3 (câu 6-8): pool ẢNH dùng chung 4 ảnh (A-D), chọn bằng bong bóng chữ ---- */
+function renderNgheP3(part){
+  const items = part.items;
+  const h1 = heading('nghe_p3', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
+  const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}</div>`;
+  });
+  if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
+  return h;
+}
+/* ---- Nghe P4 (câu 9-10): y hệt Nghe-2 ---- */
+function renderNgheP4(part){
+  const items = part.items;
+  const h1 = heading('nghe_p4', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}</div>`;
+  });
+  if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
+  return h;
+}
+/* ---- Doc P1 (câu 11-13): đọc câu, pool ẢNH dùng chung 4 ảnh (A-D) ---- */
+function renderDocP1(part){
+  const items = part.items;
+  const h1 = heading('doc_p1', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
+  const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}</div>`;
+  });
+  return h;
+}
+/* ---- Doc P2 (câu 14-16): ghép câu hỏi với pool CÂU TRẢ LỜI dùng chung 4 câu ---- */
+function renderDocP2(part){
+  const items = part.items;
+  const h1 = heading('doc_p2', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  h += '<div class="pool">';
+  Object.keys(part.pool).forEach(l=>{
+    if(!part.pool[l]) return;
+    h += `<div class="item"><span class="letter">${l}</span><span>${part.pool[l]}${part.poolPinyin[l]?` <span class="py">${part.poolPinyin[l]}</span>`:''}</span></div>`;
+  });
+  h += '</div>';
+  const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}</div>`;
+  });
+  return h;
+}
+/* ---- Doc P3 (câu 17-18): điền từ vào chỗ trống, pool TỪ dùng chung 3 từ ---- */
+function renderDocP3(part){
+  const items = part.items;
+  const h1 = heading('doc_p3', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  h += '<div class="wordbank ui">';
+  Object.keys(part.pool).forEach(l=>{
+    if(!part.pool[l]) return;
+    h += `<span><span class="letter">${l}</span>${part.pool[l]}${part.poolPinyin[l]?`<span class="py">${part.poolPinyin[l]}</span>`:''}</span>`;
+  });
+  h += '</div>';
+  const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
+  items.forEach(it=>{
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.before}（　）${it.after}</div>${bubbleRow(it.id, letters, 'letter')}</div>`;
+  });
+  return h;
+}
+/* ---- Doc P4 (câu 19-20): đọc câu/đoạn + câu hỏi ★ + 3 đáp án kèm pinyin ---- */
+function renderDocP4(part){
+  const items = part.items;
+  const h1 = heading('doc_p4', items);
+  let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
+  items.forEach(it=>{
+    const questionLine = it.question ? `<div class="qText"><b>★ ${it.question}</b>${it.questionPinyin?`<span class="py"> ${it.questionPinyin}</span>`:''}</div>` : '';
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qPassage">${starBreak(it.passage)}</div>${it.passagePinyin?`<div class="qPinyin">${it.passagePinyin}</div>`:''}${questionLine}${bubbleRow(it.id, it.options, 'text')}</div>`;
+  });
+  return h;
+}
 
-        // Show deployment URL
-        function showDeploymentUrl(url) {
-            const configInfo = document.getElementById('configInfo');
-            const deploymentUrl = document.getElementById('deploymentUrl');
-            deploymentUrl.textContent = url;
-            configInfo.style.display = 'block';
-        }
-    </script>
+/* ================= MAIN RENDER ================= */
+function allQuestionIds(){
+  const ids = [];
+  ['nghe_p1','nghe_p2','nghe_p3','nghe_p4','doc_p1','doc_p2','doc_p3','doc_p4'].forEach(k=>{
+    flattenItems(DATA[k]).forEach(it=>ids.push(it.id));
+  });
+  return ids;
+}
+function renderApp(){
+  const app = document.getElementById('app');
+  const linkAudio = DATA.nghe_p1.linkAudio || DATA.nghe_p2.linkAudio || DATA.nghe_p3.linkAudio || DATA.nghe_p4.linkAudio || '';
+  app.innerHTML = `
+    <section>
+      <h2 class="skillHeading">一、听力<span class="vi">Phần nghe</span></h2>
+      <div class="audioBar ui" id="audioBar">
+        <div><div class="label">🎧 Băng nghe chung Phần 1–4</div>
+        <div class="sub" id="audioSub">${linkAudio ? 'Bấm để bắt đầu — chỉ phát được 1 lần liên tục, không tạm dừng, không tua.' : 'Chưa có link audio cho bài này.'}</div></div>
+        <div class="audioTrack"><div class="fill" id="audioFill"></div></div>
+        <button class="btn" id="playBtn" ${linkAudio?'':'disabled'}>▶ Bắt đầu nghe</button>
+        <button class="btn warn hidden" id="replayBtn">🔁 Nghe lại (–10 điểm)</button>
+      </div>
+      <div class="partCard nghe">${renderNgheP1(DATA.nghe_p1)}</div>
+      <div class="partCard nghe">${renderNgheP2(DATA.nghe_p2)}</div>
+      <div class="partCard nghe">${renderNgheP3(DATA.nghe_p3)}</div>
+      <div class="partCard nghe">${renderNgheP4(DATA.nghe_p4)}</div>
+    </section>
+    <section>
+      <h2 class="skillHeading">二、阅读<span class="vi">Phần đọc</span></h2>
+      <div class="partCard doc">${renderDocP1(DATA.doc_p1)}</div>
+      <div class="partCard doc">${renderDocP2(DATA.doc_p2)}</div>
+      <div class="partCard doc">${renderDocP3(DATA.doc_p3)}</div>
+      <div class="partCard doc">${renderDocP4(DATA.doc_p4)}</div>
+    </section>
+  `;
+  attachHandlers(linkAudio);
+  updateProgress();
+}
+
+/* ================= EVENTS ================= */
+function attachHandlers(linkAudio){
+  document.querySelectorAll('.bubble[data-qid], .imgBubble[data-qid]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(submitted) return;
+      const qid = btn.dataset.qid, val = btn.dataset.val;
+      answers[qid] = val;
+      document.querySelectorAll(`.bubble[data-qid="${qid}"], .imgBubble[data-qid="${qid}"]`).forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updateProgress();
+    });
+  });
+
+  const playBtn = document.getElementById('playBtn');
+  if(linkAudio) playBtn.addEventListener('click', startAudio);
+  document.getElementById('replayBtn').addEventListener('click', replayAudio);
+  document.getElementById('submitBtn').addEventListener('click', onSubmit);
+  document.getElementById('reviewBtn').addEventListener('click', ()=>{
+    document.getElementById('resultOverlay').classList.add('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+}
+function updateProgress(){
+  const ids = allQuestionIds();
+  let done = 0;
+  ids.forEach(id=>{
+    const v = answers[id];
+    if(v!==undefined && v!==null && v!=='') done++;
+  });
+  document.getElementById('progressPill').textContent = `${done} / ${ids.length} đã làm`;
+  document.getElementById('submitCount').textContent = `Bạn đã làm ${done}/${ids.length} câu`;
+}
+
+/* ================= AUDIO GATING ================= */
+const audioEl = document.getElementById('ngheAudio');
+let audioPlayCount = 0, progressTimer = null;
+let replayUsed = false;
+function currentLinkAudio(){
+  return DATA.nghe_p1.linkAudio || DATA.nghe_p2.linkAudio || DATA.nghe_p3.linkAudio || DATA.nghe_p4.linkAudio;
+}
+function startAudio(){
+  audioEl.src = currentLinkAudio();
+  document.getElementById('playBtn').classList.add('hidden');
+  document.getElementById('audioSub').textContent = 'Đang phát... không thể tạm dừng hoặc tua.';
+  audioPlayCount++;
+  audioEl.currentTime = 0;
+  audioEl.play();
+  progressTimer = setInterval(()=>{
+    if(audioEl.duration){
+      document.getElementById('audioFill').style.width = Math.min(100,(audioEl.currentTime/audioEl.duration)*100)+'%';
+    }
+  }, 150);
+}
+function replayAudio(){
+  const btn = document.getElementById('replayBtn');
+  btn.disabled = true; btn.textContent = 'Đã dùng lượt nghe lại (–10 điểm)';
+  replayUsed = true;
+  document.getElementById('audioSub').textContent = 'Đang nghe lại (lượt cuối cùng)...';
+  audioEl.currentTime = 0; audioEl.play();
+}
+audioEl.addEventListener('ended', ()=>{
+  clearInterval(progressTimer);
+  document.getElementById('audioFill').style.width = '100%';
+  if(!replayUsed){
+    document.getElementById('audioSub').textContent = 'Đã phát xong. Bạn có thể bấm nghe lại 1 lần (sẽ bị trừ 10 điểm).';
+    document.getElementById('replayBtn').classList.remove('hidden');
+  } else {
+    document.getElementById('audioSub').textContent = 'Đã nghe lại xong. Không còn lượt nghe nào nữa.';
+  }
+});
+audioEl.addEventListener('pause', ()=>{ if(!audioEl.ended && audioPlayCount>0) audioEl.play(); });
+
+/* ================= SCORING ================= */
+// Chấm theo thang HSK1: 2 kỹ năng Nghe/Đọc, mỗi kỹ năng quy về /100 theo tỉ
+// lệ đúng trên số câu ĐÃ CÓ đáp án chuẩn, tổng 2 kỹ năng /200. Mốc 120/200
+// (60%) là mốc đạt chính thức truyền thống của HSK1.
+function computeScore(){
+  const nghe = {correct:0, total:0};
+  const doc  = {correct:0, total:0};
+  const detail = {};
+  function tally(bucket, id, ansVal, chosenVal){
+    if(!ansVal) return;
+    bucket.total++;
+    const ok = chosenVal===ansVal;
+    detail[id]=ok; if(ok) bucket.correct++;
+  }
+  ['nghe_p1','nghe_p2','nghe_p3','nghe_p4'].forEach(k=>{
+    flattenItems(DATA[k]).forEach(it=> tally(nghe, it.id, it.answer, answers[it.id]) );
+  });
+  ['doc_p1','doc_p2','doc_p3','doc_p4'].forEach(k=>{
+    flattenItems(DATA[k]).forEach(it=> tally(doc, it.id, it.answer, answers[it.id]) );
+  });
+
+  function sectionScore(b){ return b.total ? Math.round((b.correct/b.total)*100) : null; }
+  let ngheScore = sectionScore(nghe);
+  const ngheGraded = ngheScore!==null;
+  if(ngheGraded && replayUsed) ngheScore = Math.max(0, ngheScore-10);
+  const docScore = sectionScore(doc);
+
+  const parts = [ngheScore, docScore];
+  const complete = parts.every(s=>s!==null);
+  const total = parts.reduce((sum,s)=> sum + (s||0), 0);
+
+  return { ngheScore, docScore, total, complete, ngheGraded, detail };
+}
+function onSubmit(){
+  submitted = true;
+  const r = computeScore();
+  document.getElementById('scoreBig').textContent = r.total;
+  document.getElementById('scoreSub').textContent = r.complete ? '/ 200 điểm' : '/ 200 điểm (chưa đủ đáp án cả 2 kỹ năng)';
+  document.getElementById('rowNghe').textContent = r.ngheGraded ? `${r.ngheScore}/100` : 'chưa có đáp án chuẩn';
+  document.getElementById('rowDoc').textContent = r.docScore===null ? 'chưa có đáp án chuẩn' : `${r.docScore}/100`;
+  document.getElementById('rowPenalty').classList.toggle('hidden', !(replayUsed && r.ngheGraded));
+  const badge = document.getElementById('hskBadge');
+  if(r.complete){
+    const passed = r.total >= 120;
+    badge.textContent = passed ? '✅ ĐẠT — mốc 120/200' : '❌ CHƯA ĐẠT — mốc 120/200';
+    badge.className = 'hskBadge ui ' + (passed ? 'pass' : 'fail');
+  } else {
+    badge.textContent = 'Chưa đủ đáp án ở cả 2 kỹ năng nên chưa xét đạt/chưa đạt';
+    badge.className = 'hskBadge ui neutral';
+  }
+  document.getElementById('resultOverlay').classList.remove('hidden');
+  document.getElementById('submitBtn').disabled = true;
+  revealAnswers();
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'submit',
+      payload: {
+        baiSo: currentLesson, hoTen: hoTen,
+        diemNghe: r.ngheGraded ? r.ngheScore : null,
+        diemDoc: r.docScore, tongDiem: r.total,
+        dat: r.complete ? (r.total>=120 ? 'Đạt' : 'Chưa đạt') : '',
+        replayUsed: replayUsed, detail: r.detail
+      }
+    })
+  }).catch(()=>{ /* không chặn UI nếu lỗi mạng — bài đã chấm xong ở phía học sinh */ });
+}
+function revealAnswers(){
+  function markButtons(qid, correctVal){
+    if(!correctVal) return;
+    document.querySelectorAll(`.bubble[data-qid="${qid}"], .imgBubble[data-qid="${qid}"]`).forEach(b=>{
+      b.disabled = true;
+      if(b.dataset.val===correctVal) b.classList.add('correct');
+      else if(b.classList.contains('selected')) b.classList.add('wrong');
+    });
+  }
+  ['nghe_p1','nghe_p2','nghe_p3','nghe_p4','doc_p1','doc_p2','doc_p3','doc_p4'].forEach(k=>{
+    flattenItems(DATA[k]).forEach(it=>markButtons(it.id, it.answer));
+  });
+}
+</script>
 </body>
 </html>
