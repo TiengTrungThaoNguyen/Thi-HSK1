@@ -65,9 +65,13 @@
 
   h2.skillHeading{ font-family:"Noto Serif SC","Noto Serif",serif; font-weight:700; font-size:1.3rem; text-align:center; margin:36px 0 16px; text-wrap:balance; }
   h2.skillHeading .vi{ display:block; font-family:"Be Vietnam Pro",sans-serif; font-weight:600; font-size:.85rem; color:var(--ink-muted); margin-top:2px; }
-  .audioBar{ position:sticky; top:64px; z-index:20; background:var(--surface); border:1px solid var(--border); border-left:5px solid var(--nghe-accent); border-radius:10px; padding:14px 16px; margin-bottom:18px; box-shadow:var(--shadow); font-family:"Be Vietnam Pro",sans-serif; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .audioBar{ position:sticky; top:64px; z-index:20; background:var(--surface); border:1px solid var(--border); border-left:5px solid var(--nghe-accent); border-radius:10px; padding:14px 16px; margin-bottom:18px; box-shadow:var(--shadow); font-family:"Be Vietnam Pro",sans-serif; display:flex; align-items:center; gap:14px; flex-wrap:wrap; transition:padding .15s; }
   .audioBar .label{ font-weight:700; font-size:.92rem; }
   .audioBar .sub{ font-size:.78rem; color:var(--ink-muted); }
+  .audioBar.collapsed{ padding:8px 16px; cursor:pointer; }
+  .audioBar.collapsed .audioTrack, .audioBar.collapsed .btn{ display:none; }
+  .audioBar .expandHint{ display:none; font-size:.72rem; color:var(--ink-muted); margin-left:auto; }
+  .audioBar.collapsed .expandHint{ display:block; }
   .audioTrack{ flex:1 1 160px; min-width:120px; height:8px; border-radius:99px; background:var(--surface-2); overflow:hidden; }
   .audioTrack .fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--brand-dark),var(--brand-bright)); transition:width .2s linear; }
   .btn{ font-family:"Be Vietnam Pro",sans-serif; font-weight:600; font-size:.85rem; border:none; border-radius:8px; padding:9px 16px; cursor:pointer; background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 60%,var(--brand-bright) 130%); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3); }
@@ -194,7 +198,7 @@
 /* ================= STATE ================= */
 // Link Web App (Apps Script) đã Deploy cho hệ thống HSK1 — sửa lại đúng link
 // của bạn sau khi Deploy Code_HSK1.gs.
-const API_URL = 'https://script.google.com/macros/s/AKfycbwyibkDZhfBREFEvikaPHH4yspBK72qZ4kwbYqNGba81LjkRBwptkOxKnMj3zzgVg7h/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyCc3yUZ2pwpkEv5cty1q6T5Q7pFc9Qrqzi9jc9QS7Dkv2LBKhygmtDBaygpZl_UujE/exec';
 let DATA = null;
 let currentLesson = '';
 let hoTen = '';
@@ -453,6 +457,7 @@ function renderApp(){
         <div class="audioTrack"><div class="fill" id="audioFill"></div></div>
         <button class="btn" id="playBtn" ${linkAudio?'':'disabled'}>▶ Bắt đầu nghe</button>
         <button class="btn warn hidden" id="replayBtn">🔁 Nghe lại (–10 điểm)</button>
+        <span class="expandHint">(bấm để mở lại)</span>
       </div>
       <div class="partCard nghe">${renderNgheP1(DATA.nghe_p1)}</div>
       <div class="partCard nghe">${renderNgheP2(DATA.nghe_p2)}</div>
@@ -487,6 +492,10 @@ function attachHandlers(linkAudio){
   const playBtn = document.getElementById('playBtn');
   if(linkAudio) playBtn.addEventListener('click', startAudio);
   document.getElementById('replayBtn').addEventListener('click', replayAudio);
+  document.getElementById('audioBar').addEventListener('click', (e)=>{
+    if(e.target.closest('button')) return; // để nút Bắt đầu nghe/Nghe lại tự xử lý, không thu/mở
+    toggleAudioBar();
+  });
   document.getElementById('submitBtn').addEventListener('click', onSubmit);
   document.getElementById('reviewBtn').addEventListener('click', ()=>{
     document.getElementById('resultOverlay').classList.add('hidden');
@@ -511,6 +520,14 @@ let replayUsed = false;
 function currentLinkAudio(){
   return DATA.nghe_p1.linkAudio || DATA.nghe_p2.linkAudio || DATA.nghe_p3.linkAudio || DATA.nghe_p4.linkAudio;
 }
+// Thu gọn/mở rộng thanh nghe — sau khi bấm bắt đầu nghe, tự thu gọn lại cho
+// đỡ chiếm chỗ màn hình; học sinh bấm vào thanh (chỗ không phải nút) để mở
+// lại bất cứ lúc nào (ví dụ để bấm "Nghe lại" sau khi đã phát xong).
+function toggleAudioBar(force){
+  const bar = document.getElementById('audioBar');
+  if(typeof force === 'boolean') bar.classList.toggle('collapsed', force);
+  else bar.classList.toggle('collapsed');
+}
 function startAudio(){
   audioEl.src = currentLinkAudio();
   document.getElementById('playBtn').classList.add('hidden');
@@ -518,6 +535,7 @@ function startAudio(){
   audioPlayCount++;
   audioEl.currentTime = 0;
   audioEl.play();
+  toggleAudioBar(true);
   progressTimer = setInterval(()=>{
     if(audioEl.duration){
       document.getElementById('audioFill').style.width = Math.min(100,(audioEl.currentTime/audioEl.duration)*100)+'%';
@@ -530,6 +548,7 @@ function replayAudio(){
   replayUsed = true;
   document.getElementById('audioSub').textContent = 'Đang nghe lại (lượt cuối cùng)...';
   audioEl.currentTime = 0; audioEl.play();
+  toggleAudioBar(true);
 }
 audioEl.addEventListener('ended', ()=>{
   clearInterval(progressTimer);
