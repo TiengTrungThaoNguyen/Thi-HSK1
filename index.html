@@ -308,13 +308,21 @@ function imgBubbleRow(qid, images){
   html += '</div>';
   return html;
 }
-// Pool ảnh dùng chung (Nghe-3, Đọc-1) — hiện 1 lần cho cả khối câu, học sinh
-// chọn đáp án bằng bong bóng chữ cái (không bấm thẳng vào ảnh).
+// Pool ảnh dùng chung (Nghe-1, Nghe-3, Đọc-1) — hiện 1 lần cho cả khối câu,
+// học sinh chọn đáp án bằng bong bóng chữ cái (không bấm thẳng vào ảnh).
+// Nếu nhiều chữ cái trỏ tới CÙNG 1 link ảnh (giáo viên dán chung 1 ảnh cho
+// nhiều đáp án), gộp lại chỉ hiện ĐÚNG 1 tấm ảnh đó, kèm đủ các chữ cái liên
+// quan bên dưới — tránh lặp lại cùng 1 ảnh nhiều lần.
 function poolImageBlock(pool){
-  let html = '<div class="imgPool">';
+  const groups = [];
   Object.keys(pool).forEach(l=>{
     if(!pool[l]) return;
-    html += `<div class="imgPoolItem"><img src="${pool[l]}" alt="Ảnh ${l}"><span class="letter">${l}</span></div>`;
+    const g = groups.find(g=>g.src===pool[l]);
+    if(g) g.letters.push(l); else groups.push({src:pool[l], letters:[l]});
+  });
+  let html = '<div class="imgPool">';
+  groups.forEach(g=>{
+    html += `<div class="imgPoolItem"><img src="${g.src}" alt="Ảnh ${g.letters.join('/')}"><span class="letter">${g.letters.join('/')}</span></div>`;
   });
   html += '</div>';
   return html;
