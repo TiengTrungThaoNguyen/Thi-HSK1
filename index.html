@@ -144,6 +144,10 @@
   .brandBlock{ font-family:"Be Vietnam Pro",sans-serif; text-align:center; margin-top:14px; }
   .brandBlock .brandName{ font-weight:700; font-size:1rem; color:var(--brand-dark); letter-spacing:.02em; }
   .brandBlock .brandSub{ font-size:.78rem; color:var(--ink-muted); margin-top:2px; }
+  .giaiThichBox{ margin-top:10px; background:var(--surface-2); border-left:3px solid var(--nghe-accent); border-radius:8px; padding:10px 14px; font-family:"Be Vietnam Pro",sans-serif; font-size:.85rem; color:var(--ink); }
+  .giaiThichBox .gtLabel{ font-weight:700; color:var(--brand-dark); margin-bottom:4px; }
+  .giaiThichBox .gtText{ white-space:pre-line; }
+  .giaiThichBox audio{ width:100%; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -333,6 +337,12 @@ function poolImageBlock(pool){
 function starBreak(s){
   return String(s||'').split('★').join('<br>★ ').replace(/^<br>/, '');
 }
+// Khung "Giải thích" (MỚI) — luôn render sẵn nhưng để ẩn (.hidden); sau khi
+// nộp bài, revealAnswers() sẽ tự điền nội dung + audio (nếu có) và bỏ ẩn,
+// CHỈ với câu học sinh làm SAI hoặc bỏ trống — làm đúng thì không hiện.
+function giaiThichBox(qid){
+  return `<div class="giaiThichBox hidden" id="gt-${qid}"></div>`;
+}
 
 /* ---- Nghe P1 (câu 1-3): pool ẢNH dùng chung 3 ảnh (A-C) lấy từ chính 3 dòng của bài — dùng chung 1 băng nghe cho cả phần Nghe ---- */
 function renderNgheP1(part){
@@ -341,7 +351,7 @@ function renderNgheP1(part){
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
   const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}${giaiThichBox(it.id)}</div>`;
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -352,7 +362,7 @@ function renderNgheP2(part){
   const h1 = heading('nghe_p2', items);
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}${giaiThichBox(it.id)}</div>`;
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -364,7 +374,7 @@ function renderNgheP3(part){
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
   const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, letters, 'letter')}${giaiThichBox(it.id)}</div>`;
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -375,7 +385,7 @@ function renderNgheP4(part){
   const h1 = heading('nghe_p4', items);
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, it.options, 'text')}${giaiThichBox(it.id)}</div>`;
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -387,7 +397,7 @@ function renderDocP1(part){
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>` + poolImageBlock(part.pool);
   const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}${giaiThichBox(it.id)}</div>`;
   });
   return h;
 }
@@ -404,7 +414,7 @@ function renderDocP2(part){
   h += '</div>';
   const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, letters, 'letter')}${giaiThichBox(it.id)}</div>`;
   });
   return h;
 }
@@ -421,7 +431,7 @@ function renderDocP3(part){
   h += '</div>';
   const letters = Object.keys(part.pool).filter(l=>part.pool[l]);
   items.forEach(it=>{
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.before}（　）${it.after}</div>${bubbleRow(it.id, letters, 'letter')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.before}（　）${it.after}</div>${bubbleRow(it.id, letters, 'letter')}${giaiThichBox(it.id)}</div>`;
   });
   return h;
 }
@@ -432,7 +442,7 @@ function renderDocP4(part){
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
   items.forEach(it=>{
     const questionLine = it.question ? `<div class="qText"><b>★ ${it.question}</b>${it.questionPinyin?`<span class="py"> ${it.questionPinyin}</span>`:''}</div>` : '';
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qPassage">${starBreak(it.passage)}</div>${it.passagePinyin?`<div class="qPinyin">${it.passagePinyin}</div>`:''}${questionLine}${bubbleRow(it.id, it.options, 'text')}</div>`;
+    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qPassage">${starBreak(it.passage)}</div>${it.passagePinyin?`<div class="qPinyin">${it.passagePinyin}</div>`:''}${questionLine}${bubbleRow(it.id, it.options, 'text')}${giaiThichBox(it.id)}</div>`;
   });
   return h;
 }
@@ -638,8 +648,26 @@ function revealAnswers(){
       else if(b.classList.contains('selected')) b.classList.add('wrong');
     });
   }
+  // Chỉ hiện "Giải thích" khi học sinh làm SAI câu đó (hoặc bỏ trống) — làm
+  // đúng thì ẩn đi, giữ đúng quy tắc đã áp dụng thống nhất cho HSK3.
+  function showGiaiThich(qid, correctVal, giaiThich, giaiThichAudio){
+    const box = document.getElementById('gt-'+qid);
+    if(!box) return;
+    if(!correctVal) return; // câu chưa có đáp án chuẩn thì không xét đúng/sai
+    const wasWrong = answers[qid] !== correctVal;
+    if(!wasWrong) return;
+    if(!giaiThich && !giaiThichAudio) return;
+    let html = '<div class="gtLabel">💡 Giải thích</div>';
+    if(giaiThich) html += `<div class="gtText">${String(giaiThich).replace(/\n/g,'<br>')}</div>`;
+    if(giaiThichAudio) html += `<audio controls preload="none" src="${giaiThichAudio}"></audio>`;
+    box.innerHTML = html;
+    box.classList.remove('hidden');
+  }
   ['nghe_p1','nghe_p2','nghe_p3','nghe_p4','doc_p1','doc_p2','doc_p3','doc_p4'].forEach(k=>{
-    flattenItems(DATA[k]).forEach(it=>markButtons(it.id, it.answer));
+    flattenItems(DATA[k]).forEach(it=>{
+      markButtons(it.id, it.answer);
+      showGiaiThich(it.id, it.answer, it.giaiThich, it.giaiThichAudio);
+    });
   });
 }
 </script>
