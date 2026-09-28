@@ -592,7 +592,11 @@ function computeScore(){
     if(!ansVal) return;
     bucket.total++;
     const ok = chosenVal===ansVal;
-    detail[id]=ok; if(ok) bucket.correct++;
+    // Cột "Chi_Tiết" trong Sheet KetQua CHỈ ghi lại những câu học sinh làm
+    // SAI (hoặc bỏ trống) — câu làm đúng không ghi vào đây nữa, để cô giáo
+    // xem nhanh đúng những câu cần chú ý mà không phải lọc qua hết 20 câu.
+    if(ok) { bucket.correct++; return; }
+    detail[id] = { chon: chosenVal || '(bỏ trống)', dung: ansVal };
   }
   ['nghe_p1','nghe_p2','nghe_p3','nghe_p4'].forEach(k=>{
     flattenItems(DATA[k]).forEach(it=> tally(nghe, it.id, it.answer, answers[it.id]) );
