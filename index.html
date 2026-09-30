@@ -300,12 +300,23 @@ function onDataLoaded(data){
 function bubbleRow(qid, options, kind){
   let html = '<div class="bubbleRow">';
   if(kind==='letter'){
+    // Phòng trường hợp server trả về thiếu "options" (ví dụ chưa Deploy bản
+    // Code.gs mới nên vẫn đang chạy code cũ, thiếu field này) — trước đây
+    // .forEach trên undefined sẽ làm VỠ LUÔN cả trang (không hiện nội dung
+    // gì nữa) chỉ vì lỗi ở 1 câu; giờ chỉ báo lỗi rõ trong Console và bỏ
+    // qua đúng câu đó, các câu khác vẫn hiện bình thường.
+    if(!Array.isArray(options)){
+      console.error('bubbleRow (letter): thiếu "options" cho câu', qid, '— có thể do chưa Deploy bản Code.gs mới nhất.');
+      html += '<div class="tbdNote">⚠️ Thiếu dữ liệu lựa chọn cho câu này (kiểm tra lại Deploy Code.gs).</div>';
+      html += '</div>';
+      return html;
+    }
     options.forEach(letter=>{
       const sel = answers[qid]===letter ? ' selected':'';
       html += `<button type="button" class="bubble letter${sel}" data-qid="${qid}" data-val="${letter}">${letter}</button>`;
     });
   } else if(kind==='text'){
-    Object.keys(options).forEach(letter=>{
+    Object.keys(options || {}).forEach(letter=>{
       const opt = options[letter];
       const text = (opt && typeof opt === 'object') ? opt.text : opt;
       const pinyin = (opt && typeof opt === 'object') ? opt.pinyin : '';
