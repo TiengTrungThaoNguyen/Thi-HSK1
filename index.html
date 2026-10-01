@@ -214,7 +214,7 @@
 /* ================= STATE ================= */
 // Link Web App (Apps Script) đã Deploy cho hệ thống HSK1 — sửa lại đúng link
 // của bạn sau khi Deploy Code_HSK1.gs.
-const API_URL = 'https://script.google.com/macros/s/AKfycbzSrlIPQAbnSBRrEpzMZs6ZtvIiVMIEqEQRCOMdWER-UK07tqZ0m_t72hh8kAa02wEl/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxR-AtgnAtXd0CdH_nIljZCRQapKXI7fZ0aLKIElAaOOPhKPX-CaCGCKTdaaZCgrY5F/exec';
 let DATA = null;
 let currentLesson = '';
 let hoTen = '';
@@ -368,17 +368,20 @@ function giaiThichBox(qid){
   return `<div class="giaiThichBox hidden" id="gt-${qid}"></div>`;
 }
 
-/* ---- Nghe P1 (câu 1-3): giống HSK2 — MỖI CÂU có 1 ảnh RIÊNG của chính câu
-   đó (ảnh đã tự in sẵn các lựa chọn bên trong), số bong bóng lấy theo
-   part.options do server tính sẵn (dựa vào cột Đáp án) — dùng chung 1 băng
-   nghe cho cả phần Nghe ---- */
+/* ---- Nghe P1 (câu 1-3): NHIỀU CÂU LIÊN TIẾP DÙNG CHUNG 1 ẢNH — ảnh chỉ
+   hiện ĐÚNG 1 LẦN cho cả khối (part.groups do server gộp sẵn theo
+   groupByConsecutiveImage_), các câu trong khối hiện nối tiếp ngay bên dưới
+   ảnh đó, số bong bóng lấy theo options RIÊNG của từng khối — dùng chung 1
+   băng nghe cho cả phần Nghe ---- */
 function renderNgheP1(part){
   const items = part.items;
   const h1 = heading('nghe_p1', items);
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
-  items.forEach(it=>{
-    const imgHtml = it.image ? `<div class="imgPool nghe"><div class="imgPoolItem"><img src="${it.image}" alt="Ảnh câu ${it.id}"></div></div>` : '';
-    h += `<div class="qRow">${imgHtml}<span class="qNum">${it.id}.</span>${bubbleRow(it.id, part.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+  (part.groups || []).forEach(g=>{
+    h += g.image ? `<div class="imgPool nghe"><div class="imgPoolItem"><img src="${g.image}" alt="Ảnh"></div></div>` : '';
+    g.items.forEach(it=>{
+      h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, g.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+    });
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -394,17 +397,18 @@ function renderNgheP2(part){
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
 }
-/* ---- Nghe P3 (câu 6-8): giống Nghe_P1 — MỖI CÂU có 1 ảnh RIÊNG của chính
-   câu đó (ảnh đã vẽ gộp sẵn các lựa chọn bên trong), số bong bóng lấy theo
-   part.options do server tính sẵn (dựa vào cột Đáp án), không còn cố định
-   4 nữa ---- */
+/* ---- Nghe P3 (câu 6-8): giống Nghe_P1 — NHIỀU CÂU LIÊN TIẾP DÙNG CHUNG 1
+   ẢNH, ảnh chỉ hiện ĐÚNG 1 LẦN cho cả khối (part.groups), số bong bóng lấy
+   theo options RIÊNG của từng khối, không còn cố định 4 nữa ---- */
 function renderNgheP3(part){
   const items = part.items;
   const h1 = heading('nghe_p3', items);
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
-  items.forEach(it=>{
-    const imgHtml = it.image ? `<div class="imgPool nghe"><div class="imgPoolItem"><img src="${it.image}" alt="Ảnh câu ${it.id}"></div></div>` : '';
-    h += `<div class="qRow">${imgHtml}<span class="qNum">${it.id}.</span>${bubbleRow(it.id, part.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+  (part.groups || []).forEach(g=>{
+    h += g.image ? `<div class="imgPool nghe"><div class="imgPoolItem"><img src="${g.image}" alt="Ảnh"></div></div>` : '';
+    g.items.forEach(it=>{
+      h += `<div class="qRow"><span class="qNum">${it.id}.</span>${bubbleRow(it.id, g.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+    });
   });
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
@@ -420,16 +424,19 @@ function renderNgheP4(part){
   if(items.some(it=>!it.answer)) h += `<div class="tbdNote">⏳ Một số câu chưa có đáp án chuẩn.</div>`;
   return h;
 }
-/* ---- Doc P1 (câu 11-13): giống HSK2 — MỖI CÂU có 1 ảnh RIÊNG của chính
-   câu đó (ảnh đã tự in sẵn các lựa chọn bên trong), số bong bóng lấy theo
-   part.options do server tính sẵn (dựa vào cột Đáp án) ---- */
+/* ---- Doc P1 (câu 11-13): NHIỀU CÂU LIÊN TIẾP DÙNG CHUNG 1 ẢNH — ảnh chỉ
+   hiện ĐÚNG 1 LẦN cho cả khối (part.groups), mỗi câu vẫn có câu văn + pinyin
+   riêng, số bong bóng lấy theo options RIÊNG của từng khối ---- */
 function renderDocP1(part){
   const items = part.items;
   const h1 = heading('doc_p1', items);
   let h = `<div class="partHead"><div class="zh">${h1.zh}</div><div class="vi ui">${h1.vi}</div></div>`;
-  items.forEach(it=>{
-    const imgHtml = it.image ? `<div class="imgPool"><div class="imgPoolItem"><img src="${it.image}" alt="Ảnh câu ${it.id}"></div></div>` : '';
-    h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${imgHtml}${bubbleRow(it.id, part.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+  (part.groups || []).forEach(g=>{
+    const imgHtml = g.image ? `<div class="imgPool"><div class="imgPoolItem"><img src="${g.image}" alt="Ảnh"></div></div>` : '';
+    h += imgHtml;
+    g.items.forEach(it=>{
+      h += `<div class="qRow"><span class="qNum">${it.id}.</span><div class="qText">${it.text}</div>${it.pinyin?`<div class="qPinyin">${it.pinyin}</div>`:''}${bubbleRow(it.id, g.options, 'letter')}${giaiThichBox(it.id)}</div>`;
+    });
   });
   return h;
 }
